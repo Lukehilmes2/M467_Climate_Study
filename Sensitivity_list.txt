@@ -15,7 +15,7 @@ b)	Low-Income persons Age
 c)	Housing Costs
 	
 	housing units
-	year structure built(?)
+	
 	Contract rent
 	Value
 	
@@ -44,5 +44,5 @@ g)	Energy data? (challenges in getting data): HRDC: LIEAP
 	
 	
 h)	Others?
-	School enrollment by detailed level of school
+	
 	Geographic identifiers
