@@ -1,0 +1,45 @@
+GEO.id,Id
+GEO.id2,Id2
+GEO.display-label,Geography
+HD01_VD01,Estimate; Total:
+HD02_VD01,Margin of Error; Total:
+HD01_VD02,"Estimate; Car, truck, or van:"
+HD02_VD02,"Margin of Error; Car, truck, or van:"
+HD01_VD03,"Estimate; Car, truck, or van: - Drove alone"
+HD02_VD03,"Margin of Error; Car, truck, or van: - Drove alone"
+HD01_VD04,"Estimate; Car, truck, or van: - Carpooled:"
+HD02_VD04,"Margin of Error; Car, truck, or van: - Carpooled:"
+HD01_VD05,"Estimate; Car, truck, or van: - Carpooled: - In 2-person carpool"
+HD02_VD05,"Margin of Error; Car, truck, or van: - Carpooled: - In 2-person carpool"
+HD01_VD06,"Estimate; Car, truck, or van: - Carpooled: - In 3-person carpool"
+HD02_VD06,"Margin of Error; Car, truck, or van: - Carpooled: - In 3-person carpool"
+HD01_VD07,"Estimate; Car, truck, or van: - Carpooled: - In 4-person carpool"
+HD02_VD07,"Margin of Error; Car, truck, or van: - Carpooled: - In 4-person carpool"
+HD01_VD08,"Estimate; Car, truck, or van: - Carpooled: - In 5- or 6-person carpool"
+HD02_VD08,"Margin of Error; Car, truck, or van: - Carpooled: - In 5- or 6-person carpool"
+HD01_VD09,"Estimate; Car, truck, or van: - Carpooled: - In 7-or-more-person carpool"
+HD02_VD09,"Margin of Error; Car, truck, or van: - Carpooled: - In 7-or-more-person carpool"
+HD01_VD10,Estimate; Public transportation (excluding taxicab):
+HD02_VD10,Margin of Error; Public transportation (excluding taxicab):
+HD01_VD11,Estimate; Public transportation (excluding taxicab): - Bus or trolley bus
+HD02_VD11,Margin of Error; Public transportation (excluding taxicab): - Bus or trolley bus
+HD01_VD12,Estimate; Public transportation (excluding taxicab): - Streetcar or trolley car (carro publico in Puerto Rico)
+HD02_VD12,Margin of Error; Public transportation (excluding taxicab): - Streetcar or trolley car (carro publico in Puerto Rico)
+HD01_VD13,Estimate; Public transportation (excluding taxicab): - Subway or elevated
+HD02_VD13,Margin of Error; Public transportation (excluding taxicab): - Subway or elevated
+HD01_VD14,Estimate; Public transportation (excluding taxicab): - Railroad
+HD02_VD14,Margin of Error; Public transportation (excluding taxicab): - Railroad
+HD01_VD15,Estimate; Public transportation (excluding taxicab): - Ferryboat
+HD02_VD15,Margin of Error; Public transportation (excluding taxicab): - Ferryboat
+HD01_VD16,Estimate; Taxicab
+HD02_VD16,Margin of Error; Taxicab
+HD01_VD17,Estimate; Motorcycle
+HD02_VD17,Margin of Error; Motorcycle
+HD01_VD18,Estimate; Bicycle
+HD02_VD18,Margin of Error; Bicycle
+HD01_VD19,Estimate; Walked
+HD02_VD19,Margin of Error; Walked
+HD01_VD20,Estimate; Other means
+HD02_VD20,Margin of Error; Other means
+HD01_VD21,Estimate; Worked at home
+HD02_VD21,Margin of Error; Worked at home

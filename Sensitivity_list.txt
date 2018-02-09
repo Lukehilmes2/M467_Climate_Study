@@ -13,7 +13,7 @@ b)	Low-Income persons Age
 	
 	
 c)	Housing Costs
-	unweighted sample housing units
+	
 	housing units
 	year structure built(?)
 	Contract rent
