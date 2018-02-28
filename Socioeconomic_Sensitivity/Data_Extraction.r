@@ -124,8 +124,8 @@ ACS$numElderly <-(as.numeric(as.character(dfSexByAge[-1,]$HD01_VD20))+
 
 
 #Calculate percentage of kids and elderly of each block group based on total population
-ACS$PercentKids <- ((as.numeric(as.character(ACS$numKids)))/(as.numeric(as.character(ACS$TotalPopulation))))
-ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as.character(ACS$TotalPopulation))))
+ACS$PercentKids <- ((as.numeric(as.character(ACS$numKids)))/(as.numeric(as.character(ACS$TotalPopulation))))*100
+ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as.character(ACS$TotalPopulation))))*100
 ################################################################################
 
 
@@ -146,7 +146,7 @@ ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as
 
 ################################################################################
 #Household income will be calculated as an average for the block group, as per midpoint of income range
-IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,200000)
+IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,250000)
 ACS$AvgIncome<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*IncomeMids[1])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD03)))*IncomeMids[2])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD04)))*IncomeMids[3])+
