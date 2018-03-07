@@ -1,5 +1,5 @@
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity/ACSData16_5YR")
-
+library(plotly)
 
 
 #Declare names of all available data tables for 
@@ -11,7 +11,6 @@ Education = paste("ACS_16_5YR_B15003_with_ann.csv",sep = "")
 Employment = paste("ACS_16_5YR_B23025_with_ann.csv",sep = "")
 HouseholdIncome = paste("ACS_16_5YR_B19001_with_ann.csv",sep = "")
 HealthInsurance = paste("ACS_16_5YR_B27010_with_ann.csv",sep = "")
-
 #HousingUnits = paste("ACS_16_5YR_B25001_with_ann.csv",sep = "")
 #YearBuilt = paste("ACS_16_5YR_B25034_with_ann.csv",sep = "")
 #ContractRent = paste("ACS_16_5YR_B25056_with_ann.csv",sep = "")
@@ -23,11 +22,10 @@ HealthInsurance = paste("ACS_16_5YR_B27010_with_ann.csv",sep = "")
 #read in csv files of all available data tables for  
 dfSexByAge = read.csv(SexByAge)
 dfHouseholdIncome = read.csv(HouseholdIncome)
-dfEducation = read.csv(Education)
-dfEmployment= read.csv(Employment)
-dfHouseholdSize= read.csv(HouseholdSize)
-dfHealthInsurance= read.csv(HealthInsurance)
-
+dfEducation = read.csv(Education) #1-9 1:less than 8th, 2: 9-12, 3: GED or Equiv, 4= HS diploma, 5: some college, 6-7: Assoc, 8: Bach, 9: Masters and PHD 
+dfEmployment= read.csv(Employment) 
+dfHouseholdSize= read.csv(HouseholdSize) #Maybe
+dfHealthInsurance= read.csv(HealthInsurance) #Maybe
 #dfTransToWork = read.csv(TransToWork)
 #dfHouseholdType = read.csv(HouseholdType)
 #dfPovertyStatus = read.csv(PovertyStatus)
@@ -41,7 +39,7 @@ dfHealthInsurance= read.csv(HealthInsurance)
 
 ACS  <- cbind.data.frame(dfSexByAge$GEO.id2)
 ACS$Display <- (dfSexByAge$GEO.display.label)
-ACS$TotalPopulation <- (dfSexByAge$HD01_VD01)
+ACS$TotalPopulation <- (as.numeric(as.character(dfSexByAge$HD01_VD01)))
 
 #Rename the columns in ACSto be easier to work with
 
@@ -99,8 +97,8 @@ ACS$AvgAge <- ((as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03)))*AgeList[1] 
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD47)))*AgeList[21]+ 
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD48)))*AgeList[22]+
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD49)))*AgeList[23])
-ACS$AvgAge <- ((as.numeric(as.character(ACS$AvgAge)))/as.numeric(as.character(ACS$TotalPopulation)))
 
+ACS$AvgAge <- ((as.numeric(as.character(ACS$AvgAge)))/as.numeric(as.character(ACS$TotalPopulation)))
 
 ACS$numKids <-((as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03))) +
   as.numeric(as.character((dfSexByAge[-1,]$HD01_VD04)))+ 
@@ -146,8 +144,17 @@ ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as
 
 ################################################################################
 #Household income will be calculated as an average for the block group, as per midpoint of income range
-IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,250000)
-ACS$AvgIncome<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*IncomeMids[1])+
+
+#Income Midpoint for individuals above $200,000 income taken from https://en.wikipedia.org/wiki/Household_income_in_the_United_States
+#Distribution of household incomes for the United States(2014)
+#($200,000 - $250,000) 2.61% @ 220,267  & ($250,000 and over) 3.02% & 402,476 (percentage of population @ mean income)
+
+x<- 2.61/(2.61+3.02) #Determine proportions for $200,000-$250,000
+y = 1-x              #Determine prportions for >$250,000
+MaxIncomeMidpoint= (x*220267)+(y*402476) #sum proportions*median income for each range to determine the midpoint of individuals w/ income over $200,000
+
+IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,MaxIncomeMidpoint)
+ACS$IncomeTotal<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*IncomeMids[1])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD03)))*IncomeMids[2])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD04)))*IncomeMids[3])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD05)))*IncomeMids[4])+
@@ -163,8 +170,37 @@ ACS$AvgIncome<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*I
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD15)))*IncomeMids[14])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD16)))*IncomeMids[15])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD17)))*IncomeMids[16])))
-ACS$AvgIncome <- ((as.numeric(as.character(ACS$AvgIncome)))/(as.numeric(as.character(ACS$TotalPopulation))))
+ACS$AvgIncome <- ((as.numeric(as.character(ACS$IncomeTotal)))/(as.numeric(as.character(ACS$TotalPopulation))))
+AvgIncomeAllMC<- sum(ACS$AvgIncomeTotal)
+
+TotalPop<- sum(ACS$TotalPopulation)
+PeopleOverMaxIncome<- sum(as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD17)))
+OverMaxIncomePercentage<- (PeopleOverMaxIncome/TotalPop)*100
+OverMaxIncomePercentage
 ################################################################################
 
 
+################################################################################
+x <- list(
+  title = "Age (Years)"
+)
+fit<-density(ACS$AvgAge)
+med <- median(ACS$AvgAge)
+p<-plot_ly(x = ACS$AvgAge,type = 'histogram',nbinsx = 10)%>%
+  layout(title = "Histogram of Average Ages in Block Groups of Missoula County",xaxis = x)%>% 
+  add_trace(x = c(med,med),y = c(0,35),type = 'scatter',mode = 'lines',name = 'Median') %>% 
+  add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
+  layout(yaxis2 = list(overlaying = "y", side = "right"))
+p
 
+x <- list(
+  title = "Income (Dollars)"
+)
+fit<-density(ACS$AvgIncome)
+med <- median(ACS$AvgIncome)
+p<-plot_ly(x = ACS$AvgIncome,type = 'histogram')%>%
+  layout(title = "Histogram of Average Income in Block Groups of Missoula County",xaxis = x)%>% 
+  add_trace(x = c(med,med),y = c(0,23),type = 'scatter',mode = 'lines',name = 'Median') %>% 
+  add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
+  layout(yaxis2 = list(overlaying = "y", side = "right"))
+p
