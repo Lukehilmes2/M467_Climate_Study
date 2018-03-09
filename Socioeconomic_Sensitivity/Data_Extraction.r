@@ -154,7 +154,7 @@ y = 1-x              #Determine prportions for >$250,000
 MaxIncomeMidpoint= (x*220267)+(y*402476) #sum proportions*median income for each range to determine the midpoint of individuals w/ income over $200,000
 
 IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,MaxIncomeMidpoint)
-ACS$IncomeTotal<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*IncomeMids[1])+
+ACS$AvgIncome<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*IncomeMids[1])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD03)))*IncomeMids[2])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD04)))*IncomeMids[3])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD05)))*IncomeMids[4])+
@@ -170,13 +170,52 @@ ACS$IncomeTotal<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD15)))*IncomeMids[14])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD16)))*IncomeMids[15])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD17)))*IncomeMids[16])))
-ACS$AvgIncome <- ((as.numeric(as.character(ACS$IncomeTotal)))/(as.numeric(as.character(ACS$TotalPopulation))))
-AvgIncomeAllMC<- sum(ACS$AvgIncomeTotal)
+
+ACS$AvgIncome <- ((as.numeric(as.character(ACS$AvgIncome)))/(as.numeric(as.character(ACS$TotalPopulation))))
 
 TotalPop<- sum(ACS$TotalPopulation)
-PeopleOverMaxIncome<- sum(as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD17)))
-OverMaxIncomePercentage<- (PeopleOverMaxIncome/TotalPop)*100
-OverMaxIncomePercentage
+################################################################################
+
+
+################################################################################
+#Education will be grouped 1-9: 1:less than 8th grade, 2: 9-12, 3: GED or Equiv, 4= HS diploma,
+#5: some college, 6-7: Assoc, 8: Bach, 9: Masters and PHD
+#to match MEPS data and determine a quantitative value for average education of a block group
+LTEight <- (as.numeric(as.character(dfEducation[-1,]$HD01_VD02)))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD03))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD04))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD05))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD06))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD07))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD08))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD09))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD10))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD11))))+
+                          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD12))))
+
+Nine_Twelve <- (as.numeric(as.character(dfEducation[-1,]$HD01_VD13)))+
+                ((as.numeric(as.character(dfEducation[-1,]$HD01_VD14))))+
+                ((as.numeric(as.character(dfEducation[-1,]$HD01_VD15))))+
+                ((as.numeric(as.character(dfEducation[-1,]$HD01_VD16))))*2
+
+GED <- ((as.numeric(as.character(dfEducation[-1,]$HD01_VD18))))*3
+
+HSDiploma<-((as.numeric(as.character(dfEducation[-1,]$HD01_VD17))))*4
+
+SomeCollege<-((as.numeric(as.character(dfEducation[-1,]$HD01_VD19))))+
+              ((as.numeric(as.character(dfEducation[-1,]$HD01_VD20))))*5
+
+Assoc<-((as.numeric(as.character(dfEducation[-1,]$HD01_VD21))))*6.5
+
+Bach<-((as.numeric(as.character(dfEducation[-1,]$HD01_VD22))))*8
+
+Masters<-(as.numeric(as.character(dfEducation[-1,]$HD01_VD23)))+
+          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD24))))+
+          ((as.numeric(as.character(dfEducation[-1,]$HD01_VD25))))*9
+ACS$AvgEducation<-(LTEight+Nine_Twelve+GED+HSDiploma+SomeCollege+Assoc+Bach+Masters)/(as.numeric(as.character(dfEducation[-1,]$HD01_VD01)))
+#ACS$AvgEducation<-(LTEight+Nine_Twelve+GED+HSDiploma+SomeCollege+Assoc+Bach+Masters)/ACS$TotalPopulation
+median(ACS$AvgEducation)
+
 ################################################################################
 
 
@@ -186,7 +225,7 @@ x <- list(
 )
 fit<-density(ACS$AvgAge)
 med <- median(ACS$AvgAge)
-p<-plot_ly(x = ACS$AvgAge,type = 'histogram',nbinsx = 10)%>%
+p<-plot_ly(x = ACS$AvgAge,type = 'histogram',nbinsx = 10,name = "Age")%>%
   layout(title = "Histogram of Average Ages in Block Groups of Missoula County",xaxis = x)%>% 
   add_trace(x = c(med,med),y = c(0,35),type = 'scatter',mode = 'lines',name = 'Median') %>% 
   add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
@@ -198,9 +237,10 @@ x <- list(
 )
 fit<-density(ACS$AvgIncome)
 med <- median(ACS$AvgIncome)
-p<-plot_ly(x = ACS$AvgIncome,type = 'histogram')%>%
+p<-plot_ly(x = ACS$AvgIncome,type = 'histogram',name="Income")%>%
   layout(title = "Histogram of Average Income in Block Groups of Missoula County",xaxis = x)%>% 
   add_trace(x = c(med,med),y = c(0,23),type = 'scatter',mode = 'lines',name = 'Median') %>% 
   add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
+################################################################################
