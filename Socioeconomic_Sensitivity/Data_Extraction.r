@@ -3,21 +3,13 @@ library(plotly)
 
 
 #Declare names of all available data tables for 
-#commented out data that does not align with MEPS
-
 SexByAge = paste("ACS_16_5YR_B01001_with_ann.csv",sep = "")
 HouseholdSize = paste("ACS_16_5YR_B11016_with_ann.csv",sep = "")
 Education = paste("ACS_16_5YR_B15003_with_ann.csv",sep = "")
 Employment = paste("ACS_16_5YR_B23025_with_ann.csv",sep = "")
 HouseholdIncome = paste("ACS_16_5YR_B19001_with_ann.csv",sep = "")
 HealthInsurance = paste("ACS_16_5YR_B27010_with_ann.csv",sep = "")
-#HousingUnits = paste("ACS_16_5YR_B25001_with_ann.csv",sep = "")
-#YearBuilt = paste("ACS_16_5YR_B25034_with_ann.csv",sep = "")
-#ContractRent = paste("ACS_16_5YR_B25056_with_ann.csv",sep = "")
-#Value = paste("ACS_16_5YR_B25075_with_ann.csv",sep = "")
-#PovertyStatus = paste("ACS_16_5YR_B17017_with_ann.csv",sep = "")
-#TransToWork = paste("ACS_16_5YR_B08301_with_ann.csv",sep = "")
-#HouseholdType = paste("ACS_16_5YR_B11001_with_ann.csv",sep = "")
+
 
 #read in csv files of all available data tables for  
 dfSexByAge = read.csv(SexByAge)
@@ -26,31 +18,24 @@ dfEducation = read.csv(Education) #1-9 1:less than 8th, 2: 9-12, 3: GED or Equiv
 dfEmployment= read.csv(Employment) 
 dfHouseholdSize= read.csv(HouseholdSize) #Maybe
 dfHealthInsurance= read.csv(HealthInsurance) #Maybe
-#dfTransToWork = read.csv(TransToWork)
-#dfHouseholdType = read.csv(HouseholdType)
-#dfPovertyStatus = read.csv(PovertyStatus)
-#dfHousingUnits = read.csv(HousingUnits)
-#dfYearBuilt = read.csv(YearBuilt)
-#dfContractRent = read.csv(ContractRent)
-#dfValue = read.csv(Value)
+
 
 
 #Declare uniform GeoID and display name column in ACS and total population
-
 ACS  <- cbind.data.frame(dfSexByAge$GEO.id2)
 ACS$Display <- (dfSexByAge$GEO.display.label)
 ACS$TotalPopulation <- (as.numeric(as.character(dfSexByAge$HD01_VD01)))
 
 #Rename the columns in ACSto be easier to work with
-
-colnames(ACS ) <- c("GEOID2","Display","TotalPopulation")
+colnames(ACS) <- c("GEOID2","Display","TotalPopulation")
 ACS  = ACS [-1,]
-
 
 ################################################################################
 #We want peple who are more susceptible to illness: Kids and Elderly
-#Sum of kids <= 9 years old
+#List of midpoints determined by the age ranges given by the Census Bureau data
 AgeList <- c(2.5,7.5,12,16,18.5,20,21,23,27.5,32,37.5,42,47.5,52,57.5,60.5,63,65.5,68,72,77.5,82,85)
+
+#Muliply the number of individuals in each age range by the midpoint of that age range
 ACS$AvgAge <- ((as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03)))*AgeList[1] +
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD04)))*AgeList[2]+ 
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD05)))*AgeList[3]+ 
@@ -98,8 +83,10 @@ ACS$AvgAge <- ((as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03)))*AgeList[1] 
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD48)))*AgeList[22]+
                  as.numeric(as.character((dfSexByAge[-1,]$HD01_VD49)))*AgeList[23])
 
+#Divide the total age sums by the population of the block group
 ACS$AvgAge <- ((as.numeric(as.character(ACS$AvgAge)))/as.numeric(as.character(ACS$TotalPopulation)))
 
+#Sum of kids <= 9 years old
 ACS$numKids <-((as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03))) +
   as.numeric(as.character((dfSexByAge[-1,]$HD01_VD04)))+ 
   as.numeric(as.character((dfSexByAge[-1,]$HD01_VD27)))+ 
@@ -125,21 +112,6 @@ ACS$numElderly <-(as.numeric(as.character(dfSexByAge[-1,]$HD01_VD20))+
 ACS$PercentKids <- ((as.numeric(as.character(ACS$numKids)))/(as.numeric(as.character(ACS$TotalPopulation))))*100
 ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as.character(ACS$TotalPopulation))))*100
 ################################################################################
-
-
-#################################################################################
-# #Means of transportation to work will be used as a pseudo predictor of income
-# #Own vehicle/Carpool/Motorcycle,public transportation, bike/walk/other means
-# ACS$numVehicles<-(as.numeric(as.character(dfTransToWork[-1,]$HD01_VD02))+
-#                       as.numeric(as.character(dfTransToWork[-1,]$HD01_VD17))
-#                       )
-# ACS$publicTrans<-(dfTransToWork[-1,]$HD01_VD10)
-# 
-# ACS$walkOrBike <- (as.numeric(as.character(dfTransToWork[-1,]$HD01_VD18))+
-#                        as.numeric(as.character(dfTransToWork[-1,]$HD01_VD19))+
-#                        as.numeric(as.character(dfTransToWork[-1,]$HD01_VD20)))
-#################################################################################
-
 
 
 ################################################################################
@@ -181,6 +153,10 @@ TotalPop<- sum(ACS$TotalPopulation)
 #Education will be grouped 1-9: 1:less than 8th grade, 2: 9-12, 3: GED or Equiv, 4= HS diploma,
 #5: some college, 6-7: Assoc, 8: Bach, 9: Masters and PHD
 #to match MEPS data and determine a quantitative value for average education of a block group
+
+#Average education computed by multiplying the amounts of individuals in each education group by the corresponding
+#number associated with the MEPS data identifiers and divided by the estimate total of individuals surveyed by the Census Bureau
+
 LTEight <- (as.numeric(as.character(dfEducation[-1,]$HD01_VD02)))+
                           ((as.numeric(as.character(dfEducation[-1,]$HD01_VD03))))+
                           ((as.numeric(as.character(dfEducation[-1,]$HD01_VD04))))+
@@ -212,14 +188,26 @@ Bach<-((as.numeric(as.character(dfEducation[-1,]$HD01_VD22))))*8
 Masters<-(as.numeric(as.character(dfEducation[-1,]$HD01_VD23)))+
           ((as.numeric(as.character(dfEducation[-1,]$HD01_VD24))))+
           ((as.numeric(as.character(dfEducation[-1,]$HD01_VD25))))*9
+
 ACS$AvgEducation<-(LTEight+Nine_Twelve+GED+HSDiploma+SomeCollege+Assoc+Bach+Masters)/(as.numeric(as.character(dfEducation[-1,]$HD01_VD01)))
-#ACS$AvgEducation<-(LTEight+Nine_Twelve+GED+HSDiploma+SomeCollege+Assoc+Bach+Masters)/ACS$TotalPopulation
-median(ACS$AvgEducation)
-
 ################################################################################
 
 
 ################################################################################
+#Employment for the block groups will be calculated as the total number 
+#of unemployed individuals and the total of employed individuals
+ACS$Unemployed<-(as.numeric(as.character(dfEmployment[-1,]$HD01_VD05)))+
+                ((as.numeric(as.character(dfEmployment[-1,]$HD01_VD07))))
+ACS$Employed<-(as.numeric(as.character(dfEmployment[-1,]$HD01_VD04)))+
+              ((as.numeric(as.character(dfEmployment[-1,]$HD01_VD06))))
+
+################################################################################
+
+
+
+################################################################################
+#PLOTS
+#AGE HISTOGRAM
 x <- list(
   title = "Age (Years)"
 )
@@ -232,6 +220,7 @@ p<-plot_ly(x = ACS$AvgAge,type = 'histogram',nbinsx = 10,name = "Age")%>%
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
 
+#INCOME HISTOGRAM
 x <- list(
   title = "Income (Dollars)"
 )
@@ -240,6 +229,19 @@ med <- median(ACS$AvgIncome)
 p<-plot_ly(x = ACS$AvgIncome,type = 'histogram',name="Income")%>%
   layout(title = "Histogram of Average Income in Block Groups of Missoula County",xaxis = x)%>% 
   add_trace(x = c(med,med),y = c(0,23),type = 'scatter',mode = 'lines',name = 'Median') %>% 
+  add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
+  layout(yaxis2 = list(overlaying = "y", side = "right"))
+p
+
+#EDUCATION HISTOGRAM
+x <- list(
+  title = "Education"
+)
+fit<-density(ACS$AvgEducation)
+med <- median(ACS$AvgEducation)
+p<-plot_ly(x = ACS$AvgEducation,type = 'histogram',name="Education")%>%
+  layout(title = "Histogram of Average Education in Block Groups of Missoula County",xaxis = x)%>% 
+  add_trace(x = c(med,med),y = c(0,17),type = 'scatter',mode = 'lines',name = 'Median') %>% 
   add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
