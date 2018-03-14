@@ -1,0 +1,20 @@
+493 - Asthma
+393 - Chronic rheumatic pericarditis
+402 - Hypertensive heart disease
+403 - Hypertensive chronic kidney disease
+404 - Hypertensive heart and chronic kidney disease
+414 - Other forms of chronic ischemic heart disease
+416 - Chronic pulmonary heart disease
+472 - Chronic pharyngitis and nasopharyngitis
+473 - Chronic sinusitis
+474 - Chronic disease of tonsils and adenoids
+476 - Chronic laryngitis and laryngotracheitis
+490 - Bronchitis, not specified as acute or chronic
+491 - Chronic bronchitis
+496 - Chronic airway obstruction, not elsewhere classified
+428 - Heart failure
+494 - Bronchiectasis
+413 - Angina pectoris
+311 - Depressive disorder, not elsewhere classified***
+515 - Postinflammatory pulmonary fibrosis
+465 - Acute upper respiratory infections of multiple or unspecified sites
