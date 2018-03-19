@@ -106,7 +106,19 @@ ACS$numElderly <-(as.numeric(as.character(dfSexByAge[-1,]$HD01_VD20))+
                         as.numeric(as.character(dfSexByAge[-1,]$HD01_VD48))+
                         as.numeric(as.character(dfSexByAge[-1,]$HD01_VD49)))
 
-
+#Total number of individuals per block group <= 20 years old
+ACS$NonIncomePopulation <- (as.numeric(as.character(dfSexByAge[-1,]$HD01_VD03))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD04))+ 
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD05))+ 
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD06))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD07))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD08))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD27))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD28))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD29))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD30))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD31))+
+                           as.numeric(as.character(dfSexByAge[-1,]$HD01_VD32)))
 
 #Calculate percentage of kids and elderly of each block group based on total population
 ACS$PercentKids <- ((as.numeric(as.character(ACS$numKids)))/(as.numeric(as.character(ACS$TotalPopulation))))*100
@@ -143,9 +155,9 @@ ACS$AvgIncome<-((((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD02)))*I
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD16)))*IncomeMids[15])+
                    ((as.numeric(as.character(dfHouseholdIncome[-1,]$HD01_VD17)))*IncomeMids[16])))
 
-ACS$AvgIncome <- ((as.numeric(as.character(ACS$AvgIncome)))/(as.numeric(as.character(ACS$TotalPopulation))))
+#Total income for the block group divided by the total population with individuals <= 20 years old subtracted
+ACS$AvgIncome <- ((as.numeric(as.character(ACS$AvgIncome)))/((as.numeric(as.character(ACS$TotalPopulation)))-(as.numeric(as.character(ACS$NonIncomePopulation)))))
 
-TotalPop<- sum(ACS$TotalPopulation)
 ################################################################################
 
 
@@ -228,7 +240,7 @@ fit<-density(ACS$AvgIncome)
 med <- median(ACS$AvgIncome)
 p<-plot_ly(x = ACS$AvgIncome,type = 'histogram',name="Income")%>%
   layout(title = "Histogram of Average Income in Block Groups of Missoula County",xaxis = x)%>% 
-  add_trace(x = c(med,med),y = c(0,23),type = 'scatter',mode = 'lines',name = 'Median') %>% 
+  add_trace(x = c(med,med),y = c(0,11),type = 'scatter',mode = 'lines',name = 'Median') %>% 
   add_trace(x = fit$x, y = fit$y, type = "scatter", mode = "lines", yaxis = "y2", name = "Density") %>% 
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
