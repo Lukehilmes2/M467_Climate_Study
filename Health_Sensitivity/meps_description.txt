@@ -1,3 +1,4 @@
 The Meps.py program will read in and create dictionaries for each year of 2013, 2014, and 2015. As of now (2-21-18), the data is correct for the Medical codes. There is a possible data error in the full year consolidated file with the diabetes diagnosis (diabx) information, for now I left it in as it is easily modified or removed. All necessary information is present. This program seems to work correctly with correct output. The data files are too large to send through github. They can be found here:https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jspThis file is ready to move on to the next stage of associating the ICD9 codes that are determined to be chronic or severe illnesses in relation to the demographic information.
 
-2-21-18
+
+Completed 3-1-18
