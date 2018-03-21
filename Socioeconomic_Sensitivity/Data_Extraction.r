@@ -258,3 +258,5 @@ p<-plot_ly(x = ACS$AvgEducation,type = 'histogram',name="Education")%>%
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
 ################################################################################
+setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity")
+write.csv(ACS,"ACS_BlockGroupData.csv")
