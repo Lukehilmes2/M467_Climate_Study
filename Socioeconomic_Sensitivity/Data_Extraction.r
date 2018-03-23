@@ -1,3 +1,4 @@
+#Set working directory to directory containing data files
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity/ACSData16_5YR")
 library(plotly)
 
@@ -258,5 +259,7 @@ p<-plot_ly(x = ACS$AvgEducation,type = 'histogram',name="Education")%>%
   layout(yaxis2 = list(overlaying = "y", side = "right"))
 p
 ################################################################################
+
+#set working directory to directory where the csv is wanted and output ACS data frame as csv
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity")
 write.csv(ACS,"ACS_BlockGroupData.csv")
