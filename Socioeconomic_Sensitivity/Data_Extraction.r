@@ -213,6 +213,7 @@ ACS$Unemployed<-(as.numeric(as.character(dfEmployment[-1,]$HD01_VD05)))+
                 ((as.numeric(as.character(dfEmployment[-1,]$HD01_VD07))))
 ACS$Employed<-(as.numeric(as.character(dfEmployment[-1,]$HD01_VD04)))+
               ((as.numeric(as.character(dfEmployment[-1,]$HD01_VD06))))
+ACS$ProportionEmployed <- ACS$Employed/(as.numeric(as.character(dfEmployment[-1,]$HD01_VD01)))
 
 ################################################################################
 
@@ -263,3 +264,5 @@ p
 #set working directory to directory where the csv is wanted and output ACS data frame as csv
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity")
 write.csv(ACS,"ACS_BlockGroupData.csv")
+
+TrimmedACS = cbind(as.character(ACS$GEOID2),as.character(ACS$Display),ACS$AvgAge,ACS$AvgIncome,ACS$AvgEducation,ACS$ProportionEmployed)
