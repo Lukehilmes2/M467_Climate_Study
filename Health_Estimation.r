@@ -16,18 +16,16 @@ ACS = read.csv("ACS_Trimmed.csv")
 #Percentiles
 p=c(.1,.2,.3,.4,.5,.6,.7,.8,.9)
 
-#Compute cubic splines of Age, Income, and Education from MEPS data
-#Number of knots is 9
-knots<-9
 
-kAge=rcspline.eval(MEPS$Age,knots = quantile(MEPS$Age,p),nk=knots)
-kIncome=rcspline.eval(MEPS$Income,knots = quantile(MEPS$Age,p),nk=knots)
-kEducation=rcspline.eval(MEPS$Education,knots = quantile(MEPS$Age,p),nk=knots)
+#Compute cubic splines of Age, Income, and Education from MEPS data
+kAge=rcspline.eval(MEPS$Age,knots = quantile(MEPS$Age,p))
+kIncome=rcspline.eval(MEPS$Income,knots = quantile(MEPS$Income,p))
+kEducation=rcspline.eval(MEPS$Education,knots = quantile(MEPS$Education,p))
 
 #Compute cubic splines of Age, Income, and Educations from ACS data
-ACSkAge = rcspline.eval(ACS$AvgAge,knots = quantile(ACS$AvgAge,p),nk=knots)
-ACSkIncome = rcspline.eval(ACS$AvgIncome,knots = quantile(ACS$AvgIncome,p),nk=knots)
-ACSkEducation = rcspline.eval(ACS$AvgEducation,knots = quantile(ACS$AvgEducation,p),nk=knots)
+ACSkAge = rcspline.eval(ACS$AvgAge,knots = quantile(ACS$AvgAge,p))
+ACSkIncome = rcspline.eval(ACS$AvgIncome,nk = 6)
+ACSkEducation = rcspline.eval(ACS$AvgEducation,nk = 6)
 
 #Create new data frame by column binding the spline output and the binary employment data
 ACSData<- as.data.frame(cbind(as.data.frame(ACSkAge),as.data.frame(ACSkIncome),
@@ -37,7 +35,7 @@ ACSData<- as.data.frame(cbind(as.data.frame(ACSkAge),as.data.frame(ACSkIncome),
 ACSData$Intercept<- rep(1,nrow(ACSData))
 
 #Rearrange data frame to match MEPS spline data
-ACSData<-ACSData[c(23,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)]
+ACSData<-ACSData[c(17,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)]
 
 #Create a linear model to map Total ICD9 codes and Chronic ICD9 codes to the computed
 #splines corresponding to Age, Income, Education, and the binary variable, Employment
@@ -60,17 +58,19 @@ EstimateTotalICD9 = as.data.frame(predict.lm(lm.objTotal,newdata = TotalICD9test
 EstimateChronicICD9 = as.data.frame(predict(lm.objChronic,newdata = ChronicICD9testdata))
 
 #Reduce the output data set to show only the block groups of Missoula County
-EstimateTotalICD9 = as.data.frame(x[1:76,])
-EstimateChronicICD9 = as.data.frame(y[1:76,])
+EstimateTotalICD9 = as.data.frame(EstimateTotalICD9[1:76,])
+EstimateChronicICD9 = as.data.frame(EstimateChronicICD9[1:76,])
 
 #Create columns in ACS data to store Total and Chronic ICD9 code estimates
 ACS <-cbind(ACS,EstimateTotalICD9,EstimateChronicICD9)
 colnames(ACS) <- c("X","GEOID2","Display","AvgAge","AvgIncome","AvgEducation","ProportionEmployed","TotalICD9Estimate","ChronicICD9Estimate")
+ACS$GEOID2 <- as.character(ACS$GEOID2)
 
 #Plot histograms of estimated ICD9 codes
 hist(EstimateTotalICD9)
 hist(EstimateChronicICD9)
 
+#write.csv(ACS,"ACS_HealthEstimates.csv")
 
 
 
