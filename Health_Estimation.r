@@ -1,10 +1,17 @@
 library(Hmisc)
 
+setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Health_Sensitivity")
 #Set working directory to directory with data files
+
+Meps2013 = read.csv("Meps_2013.csv")
+Meps2014 = read.csv("Meps_2014.csv")
+Meps2015 = read.csv("Meps_2015.csv")
+MEPS = rbind(Meps2013,Meps2014,Meps2015)
+
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study")
 #Read in ACS and MEPS data
 ACS = read.csv("ACS_Trimmed.csv")
-MEPS = read.csv("MEPS_AllYears.csv")
+
 
 #Percentiles
 p=c(.1,.2,.3,.4,.5,.6,.7,.8,.9)
@@ -59,6 +66,7 @@ EstimateChronicICD9 = as.data.frame(y[1:76,])
 #Create columns in ACS data to store Total and Chronic ICD9 code estimates
 ACS <-cbind(ACS,EstimateTotalICD9,EstimateChronicICD9)
 colnames(ACS) <- c("X","GEOID2","Display","AvgAge","AvgIncome","AvgEducation","ProportionEmployed","TotalICD9Estimate","ChronicICD9Estimate")
+
 #Plot histograms of estimated ICD9 codes
 hist(EstimateTotalICD9)
 hist(EstimateChronicICD9)
