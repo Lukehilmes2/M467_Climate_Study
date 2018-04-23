@@ -70,7 +70,7 @@ ACS$GEOID2 <- as.character(ACS$GEOID2)
 hist(EstimateTotalICD9)
 hist(EstimateChronicICD9)
 
-#write.csv(ACS,"ACS_HealthEstimates.csv")
+write.csv(ACS,"ACS_HealthEstimates.csv")
 
 
 
