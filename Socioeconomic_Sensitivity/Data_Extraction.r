@@ -135,7 +135,7 @@ ACS$PercentElderly <- ((as.numeric(as.character(ACS$numElderly)))/(as.numeric(as
 #($200,000 - $250,000) 2.61% @ 220,267  & ($250,000 and over) 3.02% & 402,476 (percentage of population @ mean income)
 
 x<- 2.61/(2.61+3.02) #Determine proportions for $200,000-$250,000
-y = 1-x              #Determine prportions for >$250,000
+y = 1-x              #Determine proportions for >$250,000
 MaxIncomeMidpoint= (x*220267)+(y*402476) #sum proportions*median income for each range to determine the midpoint of individuals w/ income over $200,000
 
 IncomeMids <- c(5000,12500,17500,22500,27500,32500,37500,42500,47500,55000,67500,87500,112500,137500,175000,MaxIncomeMidpoint)
@@ -265,4 +265,7 @@ p
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Socioeconomic_Sensitivity")
 write.csv(ACS,"ACS_BlockGroupData.csv")
 
-TrimmedACS = cbind(as.character(ACS$GEOID2),as.character(ACS$Display),ACS$AvgAge,ACS$AvgIncome,ACS$AvgEducation,ACS$ProportionEmployed)
+TrimmedACS = as.data.frame(cbind(as.character(ACS$GEOID2),as.character(ACS$Display),as.character(ACS$TotalPopulation),ACS$AvgAge,ACS$AvgIncome,ACS$AvgEducation,ACS$ProportionEmployed))
+colnames(TrimmedACS) <- c("GEOID2","Display","TotalPopulation","AvgAge","AvgIncome","AvgEducation","ProportionEmployed")
+setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study")
+write.csv(TrimmedACS,"ACS_Trimmed.csv")

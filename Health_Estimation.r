@@ -2,6 +2,7 @@ library(Hmisc)
 
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study/Health_Sensitivity")
 #Set working directory to directory with data files
+#Read in ACS and MEPS data
 
 Meps2013 = read.csv("Meps_2013.csv")
 Meps2014 = read.csv("Meps_2014.csv")
@@ -9,7 +10,7 @@ Meps2015 = read.csv("Meps_2015.csv")
 MEPS = rbind(Meps2013,Meps2014,Meps2015)
 
 setwd("C:/Users/luke/Desktop/M467/M467_Climate_Study")
-#Read in ACS and MEPS data
+
 ACS = read.csv("ACS_Trimmed.csv")
 
 
@@ -54,8 +55,9 @@ TotalICD9testdata[1:nrow(ACSData),] = ACSData
 ChronicICD9testdata[1:nrow(ACSData),] = ACSData
 
 #Compute the estimated amount of Total and Chronic ICD9 codes based on linear model
-EstimateTotalICD9 = as.data.frame(predict.lm(lm.objTotal,newdata = TotalICD9testdata))
-EstimateChronicICD9 = as.data.frame(predict(lm.objChronic,newdata = ChronicICD9testdata))
+#Predicting means, R^2 is based on individuals
+EstimateTotalICD9 = as.data.frame(predict.lm(lm.objTotal,newdata = TotalICD9testdata,interval = "prediction"))
+EstimateChronicICD9 = as.data.frame(predict(lm.objChronic,newdata = ChronicICD9testdata,interval = "prediction"))
 
 #Reduce the output data set to show only the block groups of Missoula County
 EstimateTotalICD9 = as.data.frame(EstimateTotalICD9[1:76,])
@@ -63,8 +65,17 @@ EstimateChronicICD9 = as.data.frame(EstimateChronicICD9[1:76,])
 
 #Create columns in ACS data to store Total and Chronic ICD9 code estimates
 ACS <-cbind(ACS,EstimateTotalICD9,EstimateChronicICD9)
-colnames(ACS) <- c("X","GEOID2","Display","AvgAge","AvgIncome","AvgEducation","ProportionEmployed","TotalICD9Estimate","ChronicICD9Estimate")
+colnames(ACS) <- c("X","GEOID2","Display","Population","AvgAge","AvgIncome","AvgEducation","ProportionEmployed","TotalICD9Estimate","TotalLower","TotalUpper","ChronicICD9Estimate","ChronicLower","ChronicUpper")
 ACS$GEOID2 <- as.character(ACS$GEOID2)
+
+#Calculate confidence interval based on population of block group
+Error <- ((ACS$TotalICD9Estimate + abs(ACS$TotalLower))/2)/(ACS$Population)**.5
+ACS$TotalLower = ACS$TotalICD9Estimate-(2*Error)
+ACS$TotalUpper = ACS$TotalICD9Estimate+(2*Error)
+
+Error <- ((ACS$ChronicICD9Estimate + abs(ACS$ChronicLower))/2)/(ACS$Population)**.5
+ACS$ChronicLower = ACS$ChronicICD9Estimate-(2*Error)
+ACS$ChronicUpper = ACS$ChronicICD9Estimate+(2*Error)
 
 #Plot histograms of estimated ICD9 codes
 #hist(EstimateTotalICD9)
