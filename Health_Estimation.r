@@ -24,8 +24,8 @@ kEducation=rcspline.eval(MEPS$Education,knots = quantile(MEPS$Education,p))
 
 #Compute cubic splines of Age, Income, and Educations from ACS data
 ACSkAge = rcspline.eval(ACS$AvgAge,knots = quantile(ACS$AvgAge,p))
-ACSkIncome = rcspline.eval(ACS$AvgIncome,nk = 6)
-ACSkEducation = rcspline.eval(ACS$AvgEducation,nk = 6)
+ACSkIncome = rcspline.eval(ACS$AvgIncome,nk=6)
+ACSkEducation = rcspline.eval(ACS$AvgEducation,nk=6)
 
 #Create new data frame by column binding the spline output and the binary employment data
 ACSData<- as.data.frame(cbind(as.data.frame(ACSkAge),as.data.frame(ACSkIncome),
@@ -67,8 +67,8 @@ colnames(ACS) <- c("X","GEOID2","Display","AvgAge","AvgIncome","AvgEducation","P
 ACS$GEOID2 <- as.character(ACS$GEOID2)
 
 #Plot histograms of estimated ICD9 codes
-hist(EstimateTotalICD9)
-hist(EstimateChronicICD9)
+#hist(EstimateTotalICD9)
+#hist(EstimateChronicICD9)
 
 write.csv(ACS,"ACS_HealthEstimates.csv")
 
